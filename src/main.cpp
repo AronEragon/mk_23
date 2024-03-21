@@ -35,7 +35,7 @@ gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO9 | GPIO11 | GPIO15
 void loop() {
     
     //uint8_t c = usart_recv_blocking(USART2);
-    if (!buf.empty()) {c = buf.get()};
+    if (!buf.empty()) {c = buf.get();}
     usart_send_blocking(USART2, c);
     for (volatile uint32_t i=0; i<2000000;i++);
     gpio_toggle(GPIOE, GPIO9);
