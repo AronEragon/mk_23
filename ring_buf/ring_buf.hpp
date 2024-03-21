@@ -9,7 +9,7 @@ class Ring_buffer {
 
     void put(uint8_t);
     bool empty ();
-    bool not_full()
+    bool not_full();
 
 private:
     uint8_t wr_idx;
@@ -18,4 +18,4 @@ private:
     const uint8_t capacity {16};
     uint8_t arr [16];
 
-}
+};
