@@ -1,48 +1,52 @@
-//Кольцевой буфер
+#include <ring_buf/ring_buf.hpp>
+
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/timer.h>
+#include <libopencm3/stm32/usart.h>
 
-constexpr uint16_t PERIOD_MS{1'000};
+#include <libopencm3/cm3/nvic.h>
 
-void blink_LED() {
-    if (timer_get_counter(TIM1) < (PERIOD_MS / 2)) gpio_set(GPIOE,GPIO9);
-    else gpio_clear(GPIOE, GPIO9);
+uint8_t c{'a'};
+
+void setup() {
+
+rcc_periph_clock_enable(RCC_GPIOA);
+gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2 | GPIO3);
+gpio_set_af(GPIOA,GPIO_AF7, GPIO2 | GPIO3);
+
+rcc_periph_clock_enable(RCC_USART2);
+usart_set_baudrate(USART2, 115200);
+usart_set_databits(USART2, 8);
+usart_set_stopbits(USART2, USART_STOPBITS_1);
+usart_set_parity(USART2, USART_PARITY_NONE);
+usart_set_mode(USART2, USART_MODE_TX_RX);
+usart_set_flow_control(USART2, USART_FLOWCONTROL_NONE);
+usart_enable_rx_interrupt(USART2);
+nvic_enable_irq(NVIC_USART2_IRQ);
+usart_enable(USART2);
 
 }
+void loop() {
+    
+    uint16_t c = usart_recv_blocking(USART2);
+    usart_send_blocking(USART2, 'c');
+    for (volatile uint32_t i=0; i<2000000;i++);
+    gpio_toggle(GPIOE, GPIO9);
+    
+}
 
-void LED_gpio_setup () {
-    rcc_periph_clock_enable(RCC_GPIOE);
-    gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO9 | GPIO11 | GPIO14);
+int main () {
 
-} 
-
-void timer_setup () {
-    rcc_periph_clock_enable(RCC_TIM1);
-
-    timer_set_prescaler(TIM1, rcc_get_timer_clk_freq(TIM1) / PERIOD_MS - 1);
-    timer_set_period(TIM1, PERIOD_MS - 1);
-
-    timer_enable_counter(TIM1);
- }
-
-int main (){
-
-    //Настройка тактовой подсистемы
-    rcc_clock_setup_pll(&rcc_hsi_configs[RCC_CLOCK_HSI_64MHZ]);
-
-    LED_gpio_setup(); 
-    timer_setup();
-
-
-    //Настройка порта ввода-вывода
-    //rcc_periph_clock_enable(RCC_GPIOE);
-    //gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO9);
-
-    while (true){
-        //Переключение светодиода
-        //gpio_toggle(GPIOE, GPIO9);
-        //for (volatile uint32_t i = 0; i < 500'000; ++i);
-        blink_LED();
+    setup(); //После настройки можно подать сигнал - включить светодиод PE9(порт должен быть настроен)
+    gpio_set(GPIOE, GPIO9);
+    while (true) {
+        loop();
     }
-}  
+}
+void usart2_isr(void){
+
+
+    //очистить флаг запроса прерывания
+    //Сохранить принятый символ в переменную (глобально надо определить)
+    //переключить светодиод, например PE11 (настроить порт для работы со светодиодом, в setup) 
+}
