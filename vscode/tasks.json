@@ -1,0 +1,115 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "configure",
+            "type": "shell",
+            "command": "cmake -B build",
+            "group": "build",
+            "problemMatcher": {
+                "owner": "cmake",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                        "regexp": "^([Cc][Mm][Aa][Kk][Ee]\\s([Ee][Rr][Rr][Oo][Rr]))\\sat\\s(.*):(\\d+)\\s(.*):$",
+                        "file": 3,
+                        "line": 4,
+                },
+            },
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true,
+            },
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "statusbar": {
+                    "label": "$(go-to-file)",
+                    "detail": "tasks: configure",
+                }
+            },
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "cmake --build build",
+            "group": "build",
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                  "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                  "file": 1,
+                  "line": 2,
+                  "column": 3,
+                  "severity": 4,
+                  "message": 5,
+                }
+            },
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true,
+            },
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "statusbar": {
+                    "label": "$(gear)",
+                    "detail" : "tasks: build",
+                },
+            },
+        },
+        {
+            "label": "load",
+            "type": "shell",
+            "command": "cmake --install build",
+            "group": "build",
+            "problemMatcher": {
+                "owner": "cmake",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": [
+                    {
+                        "regexp": "^([Cc][Mm][Aa][Kk][Ee]\\s([Ee][Rr][Rr][Oo][Rr]))\\sat\\s(.*):(\\d+)\\s(.*):$",
+                        "file": 3,
+                        "line": 4,
+                    },
+                    {
+                        "regexp": "^(\\s+(.*)\\s(.*)\\s(.*))\\s(.*):$",
+                        "message": 1,
+                    },
+                ],
+            },
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true,
+            },
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "statusbar": {
+                    "label" : "$(chip)",
+                    "detail" : "tasks: load",
+                }
+            },
+        },
+        {
+            "label": "make and upload",
+            "group": "build",
+            "dependsOn": ["build", "load"],
+            "options": {
+                "statusbar": {
+                    "hide": true,
+                    "label" : "$(send)",
+                    "detail" : "tasks: build and flash",
+                }
+            }
+        }
+    ]
+}
