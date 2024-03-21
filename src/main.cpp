@@ -4,8 +4,8 @@
 
 constexpr uint16_t PERIOD_MS{1'000};
 
-void blink LED() {
-    if () gpio_set(GPIOE,GPIO9);
+void blink_LED() {
+    if (timer_get_counter(TIM1) < (PERIOD_MS / 2)) gpio_set(GPIOE,GPIO9);
     else gpio_clear(GPIOE, GPIO9);
 
 }

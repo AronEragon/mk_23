@@ -4,8 +4,8 @@ set(CMAKE_TOOLCHAIN_FILE cmake/arm-none-eabi-gcc.cmake)
 
 
 #Свойства проекта (прошивка)===================================================================================
-project(mk_23 LANGUAGES C CXX ASM)
-SET(DEVICE stm32f303cv)
+project(mk_23 (copy) LANGUAGES C CXX ASM)
+SET(DEVICE stm32f303vc)
 
 include(libopencm3)
 

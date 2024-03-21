@@ -1,0 +1,42 @@
+{
+    "cortex-debug.armToolchainPath": "/usr/bin",
+    "cortex-debug.openocdPath": "/usr/bin/openocd",
+
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "GDB debug",
+                "type": "gdb",
+                "request": "launch",
+                "target": "./${fileBasenameNoExtension}",
+                "cwd": "${workspaceRoot}",
+                "valuesFormatting": "parseText"
+            },
+            {
+                "name": "Cortex-debug",
+                "request": "launch",
+                "type": "cortex-debug",
+                "cwd": "${workspaceRoot}",
+                "servertype": "openocd",
+                "gdbPath": "/usr/bin/gdb-multiarch",
+                "interface": "swd",
+                "executable": "${workspaceRoot}/build/firmware",
+                "runToEntryPoint": "main",
+                "device": "STM32F303VC",
+                "svdFile": "${workspaceRoot}/svd/STM32F303.svd",
+                "configFiles": [
+                    "/usr/share/openocd/scripts/board/stm32f3discovery.cfg"
+                ],
+                "preLaunchCommands": [
+                    "set mem inaccessible-by-default off",
+                    "monitor reset"
+                ],
+                "postLaunchCommands": [
+                    "monitor reset init",
+                    "monitor sleep 200"
+                ],
+            },
+        ]
+    },
+}
